@@ -24,23 +24,21 @@ import static org.mockito.Mockito.when;
 class AwsSesEmailSenderProviderTest {
 
     private AwsSesEmailSenderProvider provider;
+    private String user;
 
-    @Mock
-    private UserModel user;
     @Mock
     private SesClient ses;
 
     @BeforeEach
     void before() {
         MockitoAnnotations.initMocks(this);
+        this.user = "user@example.com";
     }
 
     @Test
     void testSend() throws EmailException {
         Map<String, String> config = new HashMap<>();
         config.put("from", "john@example.com");
-
-        when(user.getEmail()).thenReturn("user@example.com");
 
         provider = new AwsSesEmailSenderProvider(ses);
         provider.send(config, user, "Subject", "Text Body", "Html Body");

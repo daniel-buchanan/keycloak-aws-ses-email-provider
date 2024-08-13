@@ -1,11 +1,16 @@
 # Keycloak Email Provider for AWS SES (Simple Email Service)
 
-This is a drop-in Email Provider SPI replacement implementation for [Keycloak SSO](https://www.keycloak.org) server.
-It's for demo purposes only and can be used as base for your own implementation.
+This is a drop-in Email Provider SPI replacement implementation for the default SMTP one provided by [Keycloak SSO](https://www.keycloak.org) server.
 
-The codebase is provided _as-is_ and might not be free of errors.
-So, you're on your own when using it.
-Generally, this project is _work in progress_.
+This is forked from the original implementation by [dasniko](https://github.com/dasniko/keycloak-aws-ses-email-provider).  
+The only changes from the original implementation are to be updated to work with KeyCloak 25 and Java 21.
+
+Niko's original warnings apply:
+> It's for demo purposes only and can be used as base for your own implementation.
+> 
+> The codebase is provided _as-is_ and might not be free of errors.
+> So, you're on your own when using it.
+> Generally, this project is _work in progress_.
 
 ## Dependencies
 
@@ -15,7 +20,7 @@ This dependency will be packaged with the help of the Maven Shade Plugin into th
 To save space and build a smaller fat-jar, all the async resources have been excluded from the AWS SDK.
 The email provider just uses the synchronous client.
 
-All other dependencies are used from Keycloaks underlying Wildfly server
+All other dependencies are used from Keycloaks underlying Quarkus server
 (see [jboss-deployment-structure.xml](./src/main/resources/META-INF/jboss-deployment-structure.xml)).
 
 ## Installation
@@ -25,6 +30,28 @@ into the `standalone/deployments/` folder of your Keycloak installation.
 It will be deployed automatically (hot deployment works the same).
 
 ## Configuration
+
+There are several ways SPIs can be configured now with KeyCloak 25.
+
+### 1. `kc.sh`
+
+To configure the SPI using either the `kc.sh build` or `kc.sh start` commands, it is configured in the same way as other providers.  
+
+```bash
+/opt/keycloak/bin/kc.sh build \
+  --spi-emailSender-provider=aws-ses \
+  --spi-emailSender-aws-ses-enabled=true;
+```
+
+or;
+
+```bash
+/opt/keycloak/bin/kc.sh start \
+  --spi-emailSender-provider=aws-ses \
+  --spi-emailSender-aws-ses-enabled=true;
+```
+
+### 2. Configuration File
 
 To configure the email provider SPI, include a snippet like this in your `standalone(-ha).xml` file:
 
@@ -44,6 +71,7 @@ To configure the email provider SPI, include a snippet like this in your `standa
 </subsystem>
 ```
 
+### 3. JBoss CLI
 Alternatively, you can use this `jboss-cli` script snippet to configure your Keycloak server:
 
 ```
@@ -56,6 +84,7 @@ end-if
 # /subsystem=keycloak-server/spi=emailSender/provider=aws-ses/:write-attribute(name=properties,value={"region" => "eu-west-1"})
 ```
 
+### Configuration Notes
 As the Email Provider SPI is not selectable/configurable on a per-realm base, you can't set the AWS SES provider for one realm and leave the default SMTP provider in another.
 If you use/configure this SPI to be used in Keyclaok, it's system-wide!
 

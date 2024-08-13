@@ -6,10 +6,10 @@
 
     <groupId>dasniko</groupId>
     <artifactId>keycloak-aws-ses-email-provider</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>22.0-SNAPSHOT</version>
 
     <properties>
-        <java.version>1.8</java.version>
+        <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
